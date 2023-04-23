@@ -268,7 +268,7 @@ class Dalai {
       } else {
         const startpattern = /.*sampling parameters:.*/g
         const endpattern = /.*mem per token.*/g
-        let started = req.debug
+        let started = req.debug || req.cliMode
         let ended = false
         let writeEnd = !req.skip_end
         await this.exec(`${main_bin_path} ${chunks.join(" ")}`, this.cores[Core].home, (proc, msg) => {
