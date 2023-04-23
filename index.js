@@ -230,26 +230,28 @@ class Dalai {
     // const prePrompt = cleanString(platform,req.prePrompt??"");
     const prePrompt = req.prePrompt;
 
-    const personName = cleanString(platform,req.personName??"");
-
 
     isInteractive = true;
 
     if (req.interactive){
       chunks.push('-i');
       chunks.push('--color');
-      var name = (personName && personName.length > 0  ) ? personName : "User:";
-      chunks.push(`-r ${name} `);
+      for(const interactStop of req.interactStops){
+        chunks.push(`-r ${cleanString(platform,interactStop)}`);
+      }
+      if(req.interactiveFirst) {
+        chunks.push(`--interactive-first`);
+      }
 
       if (prePrompt && prePrompt.length > 0  ) {
-        console.log("prePrompt GOT")
+        if(req.debug) console.log("prePrompt GOT")
         //write prePrompt to file
         const prePromptFile = path.resolve(this.home, Core, "prePrompt.txt");
         fs.writeFileSync(prePromptFile, prePrompt);
         chunks.push(`-f ${prePromptFile}`);
         // chunks.push(`-f ${prePrompt}`);
       }else{
-        console.log("prePrompt NOT GOT")
+        if(req.debug) console.log("prePrompt NOT GOT")
       }
 
     }else{
@@ -259,7 +261,7 @@ class Dalai {
     }
 
     const main_bin_path = platform === "win32" ? path.resolve(this.home, Core, "build", "Release", "main") : path.resolve(this.home, Core, "main")
-    console.log('inited', chatInited,"isInteractive", isInteractive)
+    if(req.debug) console.log('inited', chatInited,"isInteractive", isInteractive)
     if (!isInteractive){
       if (req.full) {
         await this.exec(`${main_bin_path} ${chunks.join(" ")}`, this.cores[Core].home, cb)
@@ -286,13 +288,13 @@ class Dalai {
 
         chatInited = true;
         if (req.full) {
-          console.log("full")
+          if(req.debug) console.log("full")
           await this.exec(`${main_bin_path} ${chunks.join(" ")}`, this.cores[Core].home, cb,false)
         } else {
-          console.log("not full")
+          if(req.debug) console.log("not full")
           const startpattern = /.*sampling parameters:.*/g
           const endpattern = /.*mem per token.*/g
-          let started = req.debug
+          let started = req.debug || req.cliMode
           let ended = false
           let writeEnd = !req.skip_end
           await this.exec(`${main_bin_path} ${chunks.join(" ")}`, this.cores[Core].home, (proc, msg) => {
