@@ -248,7 +248,7 @@ class Dalai {
         //write prePrompt to file
         const prePromptFile = path.resolve(this.home, Core, "prePrompt.txt");
         fs.writeFileSync(prePromptFile, prePrompt);
-        chunks.push(`-f ${prePromptFile}`);
+        chunks.push(`-f "${prePromptFile}"`);
         // chunks.push(`-f ${prePrompt}`);
       }else{
         if(req.debug) console.log("prePrompt NOT GOT")
@@ -260,7 +260,7 @@ class Dalai {
       chunks.push(`-p ${prompt}`)
     }
 
-    const main_bin_path = platform === "win32" ? path.resolve(this.home, Core, "build", "Release", "main") : path.resolve(this.home, Core, "main")
+    const main_bin_path = platform === "win32" ? "./main" : path.resolve(this.home, Core, "main")
     if(req.debug) console.log('inited', chatInited,"isInteractive", isInteractive)
     if (!isInteractive){
       if (req.full) {
