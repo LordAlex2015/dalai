@@ -547,7 +547,7 @@ class Dalai {
       socket.on('request', async (req) => {
         req.models = Array.from(new Set(req.models))
         await this.query(req, (str) => {
-          io.emit("result", { response: str, request: req })
+          io.emit("response", { response: str, request: req })
         })
       });
     });
