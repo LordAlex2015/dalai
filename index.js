@@ -191,7 +191,7 @@ class Dalai {
       }
     }
 
-    if (!req.prompt) {
+    if (!req.prompt && !(req.prePrompt && req.interactive)) {
       return
     }
 
